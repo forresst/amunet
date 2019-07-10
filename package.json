@@ -1,0 +1,64 @@
+{
+	"name": "amunet",
+	"version": "0.1.0",
+	"description": "Amunet : markdown metadata hidden",
+	"license": "MIT",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/forresst/amunet.git"
+	},
+	"bugs": {
+		"url": "https://github.com/forresst/amunet/issues"
+	},
+	"homepage": "https://github.com/forresst/amunet#readme",
+	"author": {
+		"name": "Stéphane Reynaud",
+		"url": "https://github.com/forresst"
+	},
+	"files": [
+		"index.js"
+	],
+	"engines": {
+		"node": ">=8"
+	},
+	"scripts": {
+		"test": "xo && nyc ava"
+	},
+	"commitlint": {
+		"extends": [
+			"@commitlint/config-conventional"
+		]
+	},
+	"keywords": [
+		"amunet",
+		"mardown",
+		"metadata",
+		"hidden"
+	],
+	"dependencies": {},
+	"devDependencies": {
+		"@commitlint/cli": "^7.6.1",
+		"@commitlint/config-conventional": "^7.6.0",
+		"ava": "^2.2.0",
+		"coveralls": "^3.0.4",
+		"husky": "^2.7.0",
+		"markdown-magic": "^0.1.25",
+		"markdown-magic-package-json": "^2.0.0",
+		"mock-fs": "^4.10.1",
+		"nyc": "^14.1.1",
+		"xo": "^0.24.0"
+	},
+	"nyc": {
+		"reporter": [
+			"lcov",
+			"text"
+		]
+	},
+	"husky": {
+		"hooks": {
+			"commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+			"pre-commit": "node ./script/generate-docs.js"
+		}
+	}
+}
