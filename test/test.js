@@ -19,6 +19,10 @@ const getLocalMetadata = async filenamemarkdown => {
 const deleteContentFolderRecursiveSync = pathFolder => {
 	if (fs.existsSync(pathFolder)) {
 		fs.readdirSync(pathFolder).forEach(file => {
+			if (file === '.gitignore') {
+				return;
+			}
+
 			const curPath = path.join(pathFolder, file);
 			if (fs.lstatSync(curPath).isDirectory()) {
 				deleteContentFolderRecursiveSync(curPath);
