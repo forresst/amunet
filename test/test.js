@@ -1,10 +1,10 @@
 'use strict';
 const path = require('path');
 const https = require('https');
-const amunet = require('..');
 const {promisify} = require('util');
 const fs = require('fs');
 const test = require('ava');
+const amunet = require('..');
 
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);

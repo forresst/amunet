@@ -1,6 +1,6 @@
 'use strict';
-const amunet = require('..');
 const test = require('ava');
+const amunet = require('..');
 
 test('The `parse` function without arguments should throw an error', t => {
 	t.throws(() => {

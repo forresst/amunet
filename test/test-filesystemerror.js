@@ -1,6 +1,6 @@
 const test = require('ava');
-const amunet = require('..');
 const mockfs = require('mock-fs');
+const amunet = require('..');
 
 test.beforeEach.cb(t => {
 	mockfs({
