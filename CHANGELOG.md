@@ -1,3 +1,21 @@
+<a name="0.2.0"></a>
+# [0.2.0](https://github.com/forresst/amunet/compare/0.1.0...0.2.0) (2019-07-12)
+
+
+### chore
+
+* bump dev dependencies ([3a33384](https://github.com/forresst/amunet/commit/3a33384))
+
+### docs
+
+* fix badges ([98a0058](https://github.com/forresst/amunet/commit/98a0058))
+
+### feat
+
+* simplifies the use of the stringify function ([01daeb4](https://github.com/forresst/amunet/commit/01daeb4))
+
+
+
 <a name="0.1.0"></a>
 # 0.1.0 (2019-07-11)
 
