@@ -102,7 +102,7 @@ test('Read two metadata', async t => {
 });
 
 test('Read remote', async t => {
-	t.deepEqual(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/testmarkdown/master/README.md'), {key1: 'value1', key2: 'value2'});
+	t.deepEqual(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'), {filename: 'README.md'});
 });
 
 test('Read with metadata anywhere', async t => {
