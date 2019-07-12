@@ -22,18 +22,16 @@ const parse = input => {
 	return metas;
 };
 
-const stringify = (contentFile, objectBefore, objectAfter) => {
-	if (`${typeof contentFile}` !== 'string') {
-		throw new TypeError(`Expected the \`contentFile\` argument to be of type \`String\`, got \`${typeof contentFile}\``);
-	}
-
-	if (`${typeof objectBefore}` !== 'object') {
-		throw new TypeError(`Expected the \`objectBefore\` argument to be of type \`Object\`, got \`${typeof objectBefore}\``);
+const stringify = (input, objectAfter) => {
+	if (`${typeof input}` !== 'string') {
+		throw new TypeError(`Expected the \`input\` argument to be of type \`String\`, got \`${typeof input}\``);
 	}
 
 	if (`${typeof objectAfter}` !== 'object') {
 		throw new TypeError(`Expected the \`objectAfter\` argument to be of type \`Object\`, got \`${typeof objectAfter}\``);
 	}
+
+	const objectBefore = parse(input);
 
 	// Add metadata
 	let addContent = '';
@@ -43,25 +41,25 @@ const stringify = (contentFile, objectBefore, objectAfter) => {
 [${key}]: # (${objectAfter[key]})`;
 		}
 	});
-	contentFile = addContent + contentFile;
+	let result = addContent + input;
 
 	Object.keys(objectBefore).forEach(key => {
 		// Delete metadata
 		if (objectAfter[key] === undefined) {
 			const regexpKey = new RegExp('^[\t ]*\\[[\t ]*' + key + '[\t ]*\\]:[\t ]*#[\t ]+\\([^[(\\])\t]+\\)[\\r\\n|\\r|\\n]?', 'gm');
-			contentFile = contentFile.replace(regexpKey, '');
+			result = result.replace(regexpKey, '');
 			return;
 		}
 
 		// Change metadata
 		if (objectBefore[key] !== objectAfter[key]) {
 			const regexpKey = new RegExp('^[\t ]*\\[[\t ]*' + key + '[\t ]*\\]:[\t ]*#[\t ]+\\([^[(\\])\t]+\\)$', 'gm');
-			contentFile = contentFile.replace(regexpKey, `[${key}]: # (${objectAfter[key]})`
+			result = result.replace(regexpKey, `[${key}]: # (${objectAfter[key]})`
 			);
 		}
 	});
 
-	return contentFile;
+	return result;
 };
 
 const read = async filePath => new Promise((resolve, reject) => {
@@ -69,24 +67,24 @@ const read = async filePath => new Promise((resolve, reject) => {
 		if (error) {
 			// The file doesn't exist
 			if (error.code === 'ENOENT') {
-				return resolve({contentFile: '', metadata: {}});
+				return resolve({});
 			}
 
 			return reject(error);
 		}
 
-		return resolve({contentFile: data, metadata: parse(data)});
+		return resolve(parse(data));
 	});
 });
 
 const readSync = filePath => {
 	try {
 		const data = fs.readFileSync(filePath, 'utf8');
-		return {contentFile: data, metadata: parse(data)};
+		return parse(data);
 	} catch (error) {
 		// The file doesn't exist
 		if (error.code === 'ENOENT') {
-			return {contentFile: '', metadata: {}};
+			return {};
 		}
 
 		throw error;
@@ -101,12 +99,31 @@ module.exports.readSync = readSync;
 
 module.exports.stringify = stringify;
 
-module.exports.write = async (filePath, objectAfter) => {
-	const fileBeforeChange = await read(filePath);
-	await writeFileAsync(filePath, stringify(fileBeforeChange.contentFile, fileBeforeChange.metadata, objectAfter), 'utf8');
-};
+module.exports.write = async (filePath, objectAfter) => new Promise((resolve, reject) => {
+	readFileAsync(filePath, 'utf8', (error, data) => {
+		if (error) {
+			// The file doesn't exist
+			if (error.code === 'ENOENT') {
+				return resolve(writeFileAsync(filePath, stringify('', objectAfter), 'utf8'));
+			}
+
+			return reject(error);
+		}
+
+		return resolve(writeFileAsync(filePath, stringify(data, objectAfter), 'utf8'));
+	});
+});
 
 module.exports.writeSync = (filePath, objectAfter) => {
-	const fileBeforeChange = readSync(filePath);
-	fs.writeFileSync(filePath, stringify(fileBeforeChange.contentFile, fileBeforeChange.metadata, objectAfter), 'utf8');
+	try {
+		const data = fs.readFileSync(filePath, 'utf8');
+		return fs.writeFileSync(filePath, stringify(data, objectAfter), 'utf8');
+	} catch (error) {
+		// The file doesn't exist
+		if (error.code === 'ENOENT') {
+			return fs.writeFileSync(filePath, stringify('', objectAfter), 'utf8');
+		}
+
+		throw error;
+	}
 };

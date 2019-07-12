@@ -1,7 +1,7 @@
 
 [filename]: # (README.md)
 
-# amunet
+# Amunet
 
 Amunet : markdown metadata hidden
 
@@ -23,18 +23,67 @@ Amunet : markdown metadata hidden
 ## Table of Contents
 
 <!-- ⛔️ AUTO-GENERATED-CONTENT:START (TOC) -->
-- [Inspiration](#inspiration)
+- [The goal](#the-goal)
 - [Installation](#installation)
 - [Usage](#usage)
   * [Node.js](#nodejs)
-  * [Browser](#browser)
-- [Links](#links)
+- [API](#api)
+  * [amunet.parse(input)](#amunetparseinput)
+    + [input](#input)
+    + [return](#return)
+    + [Example](#example)
+  * [amunet.stringify(input, objectAfter)](#amunetstringifyinput-objectafter)
+    + [input](#input-1)
+    + [objectAfter](#objectafter)
+    + [return](#return-1)
+    + [Example](#example-1)
+  * [amunet.read(filePath)](#amunetreadfilepath)
+    + [filePath](#filepath)
+    + [return](#return-2)
+    + [Example](#example-2)
+  * [amunet.readSync(filePath)](#amunetreadsyncfilepath)
+    + [filePath](#filepath-1)
+    + [return](#return-3)
+    + [Example](#example-3)
+  * [amunet.write(filePath, objectAfter)](#amunetwritefilepath-objectafter)
+    + [filePath](#filepath-2)
+    + [objectAfter](#objectafter-1)
+    + [return](#return-4)
+    + [Example](#example-4)
+  * [amunet.writeSync(filePath, objectAfter)](#amunetwritesyncfilepath-objectafter)
+    + [filePath](#filepath-3)
+    + [objectAfter](#objectafter-2)
+    + [return](#return-5)
+    + [Example](#example-5)
 - [LICENSE](#license)
 <!-- ⛔️ AUTO-GENERATED-CONTENT:END -->
 
-## Inspiration
+## The goal
 
-[Comment on Stackoverflow](https://stackoverflow.com/questions/4823468/comments-in-markdown/20885980#32190021)
+The goal is to embed invisible metadata in a Markdown file when this file will be rendered on a web page, for example under Github.
+
+There is a solution that is described on [Stackoverflow](https://stackoverflow.com/questions/4823468/comments-in-markdown/20885980#32190021) to add comments that will be invisible when rendering. To summarize, the following syntax allows you to include comments that will not be rendered on an html page:
+
+```txt
+
+[comment]: # (Hello world)
+
+```
+
+In general, this approach should work with most Markdown parsers, since it's part of the core specification.
+
+The complementary idea for adding metadata is to produce the metadata as key/value pairs. Just place the key between the brackets, and the value between the parentheses:
+
+```txt
+
+[key1]: # (value1)
+[key2]: # (value2)
+[a]: # (1)
+[foo] # (bar)
+
+```
+
+Amunet is the tool to parse and produce this concept easily in your Markdown files.
 
 ## Installation
 
@@ -52,8 +101,21 @@ npm install --save-dev amunet
 const path = require('path');
 const amunet = require('amunet');
 
-console.log(amunet.readSync(path.join(__dirname, 'README.md'));
-// With the 'README.md' file of this package => { filename: 'README.md' }
+// ----------------------------
+// Read the file synchronously
+// ----------------------------
+const file = amunet.readSync(path.join(__dirname, 'README.md'));
+console.log(file.metadata);
+//=> With the 'README.md' file of this package => { filename: 'README.md' }
+
+// -----------------------------
+// Read the file asynchronously
+// -----------------------------
+(async () => {
+	const fileSync = await amunet.read(path.join(__dirname, 'README.md'));
+	console.log(fileSync.metadata);
+	// With the 'README.md' file of this package => { filename: 'README.md' }
+})();
 ```
 
 Or from a remote location:
@@ -73,32 +135,302 @@ const getRemoteMetadata = url => new Promise((resolve, reject) => {
 	});
 });
 
-console.log(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'));
-// With the 'README.md' file of this package => { filename: 'README.md' }
+(async () => {
+	console.log(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'));
+	// With the 'README.md' file of this package => { filename: 'README.md' }
+})();
 ```
 
-### Browser
+## API
 
-```js
-const xhr = new XMLHttpRequest();
-xhr.open('GET', 'README.md');
-xhr.responseType = 'arraybuffer';
+### amunet.parse(input)
 
-xhr.onload = () => {
-	amunet.parse(new Uint8Array(this.response));
-	//=> { filename: 'README.md' }
-};
+Parse the content of the string. Returns a `object` with the metadata (key/value pairs).
 
-xhr.send();
-```
+#### input
 
-## Links
+Type: `string`
 
-http://johnmacfarlane.net/babelmark2/?text=%5Bkey1%5D%3A+%23+(value1)%0A%5Bkey2%5D%3A+%23+(value2)%0A%0A%23+Title%0A%0ASome+text%0A
+The string to parse.
 
-- [s9e\TextFormatter](https://github.com/s9e/TextFormatter) ([Demo](https://s9e.github.io/TextFormatter/fatdown.html)): Works!
-- [Parsedown](https://github.com/erusev/parsedown) ([Demo](http://parsedown.org/demo)): Works!
-- [markdown-it](https://github.com/markdown-it/markdown-it) ([Demo](https://markdown-it.github.io/)): Works!
+#### return
+
+Type: `object`
+
+The object with the metadata as key\value pairs.
+
+> Note: If the string does not contain metadata, the function returns an empty object.
+
+#### Example
+
+`index.js`:
+> ```javascript
+>
+> const amunet = require('amunet');
+>
+> const inputString = `
+> [a]: # (1)
+> [b]: # (Hello)
+>
+> # Doc
+>
+> Hello world
+> `
+>
+> console.log(amunet.parse(inputString));
+> //=> { a: '1', b: 'Hello' }
+> ```
+
+### amunet.stringify(input, objectAfter)
+
+Add/change/remove the content of the `input` string with the object `objectAfter`. Returns a `string` with the modified content.
+
+> Notes:
+> * If a key does not exist in the `input`string  and exist in object `objectAfter`, the key/value pairs is appended to the content with the value of `objectAfter`.
+> * If a key exist in the `input` string and exist in object `objectAfter` and the value is changed, the key/value pair is changed in the content with the value of `objectAfter`.
+> * If a key exist in the `input` string and exist in object `objectAfter` and the value is not changed, the content is not changed.
+> * If a key exist in the `input` string but does not exist in object `objectAfter`, the key/value pair is removed.
+
+#### input
+
+Type: `string`
+
+The string to stringify.
+
+#### objectAfter
+
+Type: `object`
+
+The object with all metadata as key\value pairs.
+
+#### return
+
+Type: `string`
+
+The string with the content changed.
+
+#### Example
+
+`index.js`:
+> ```javascript
+>
+> const amunet = require('amunet');
+>
+> const inputString = `
+> [a]: # (1)
+> [b]: # (Hello)
+> [c]: # (3)
+>
+> # Doc
+>
+> Hello world
+> `
+>
+> console.log(amunet.stringify(inputString, { a: '1', b: 'World', d: '4' }));
+> //=> `
+> // [d]: # (4)
+> // [a]: # (1)
+> // [b]: # (World)
+> //
+> // # Doc
+> //
+> // Hello world
+> // `
+> ```
+
+### amunet.read(filePath)
+
+Read asynchronously a file and parse its content. Returns a `Promise<object>` with the parsed metadata of the specified file (`filePath`).
+
+#### filePath
+
+Type: `string`
+
+#### return
+
+Type: `Promise<object>`
+
+The object contains the metadata as key\value pairs found in specified file.
+
+>Notes:
+> * If the file does not exist, the function returns an empty object.
+> * If the file does not contains metadata, the function returns an empty object.
+
+#### Example
+
+`README.md`:
+> ```txt
+>
+> [a]: # (1)
+> [b]: # (Hello)
+>
+> # Doc
+>
+> Hello world
+> ```
+
+`index.js`:
+> ```javascript
+>
+> const path = require('path');
+> const amunet = require('amunet');
+>
+> (async () => {
+> 	const fileAsync = await amunet.read(path.join(__dirname, 'README.md'));
+> 	console.log(fileAsync);
+> 	//=> { a: '1', b: 'Hello' }
+> })();
+> ```
+
+### amunet.readSync(filePath)
+
+Read synchronously a file and parse its content. Returns a `object` with the parsed metadata of the specified file (`filePath`).
+
+#### filePath
+
+Type: `string`
+
+#### return
+
+Type: `object`
+
+The object contains the metadata as key\value pairs found in specified file.
+
+>Notes:
+> * If the file does not exist, the function returns an empty object.
+> * If the file does not contains metadata, the function returns an empty object.
+
+#### Example
+
+`README.md`:
+> ```txt
+>
+> [a]: # (1)
+> [b]: # (Hello)
+>
+> # Doc
+>
+> Hello world
+> ```
+
+`index.js`:
+> ```javascript
+>
+> const path = require('path');
+> const amunet = require('amunet');
+>
+> const fileSync = amunet.readSync(path.join(__dirname, 'README.md'));
+> console.log(fileSync);
+> //=> { a: '1', b: 'Hello' }
+> ```
+
+### amunet.write(filePath, objectAfter)
+
+Write asynchronously a file (`filePath`) and change its content with object `objectAfter`.
+
+#### filePath
+
+Type: `string`
+
+#### objectAfter
+
+Type: `object`
+
+The object with all metadata as key\value pairs.
+
+#### return
+
+Type: `Promise`
+
+>Notes:
+> * If the file does not exist, the file is created.
+> * If the the folder of file does not exist, the file is not created.
+
+#### Example
+
+`README.md`:
+> ```txt
+>
+> [a]: # (1)
+> [b]: # (Hello)
+> [c]: # (3)
+>
+> # Doc
+>
+> Hello world
+> ```
+
+`index.js`:
+> ```javascript
+>
+> const path = require('path');
+> const amunet = require('amunet');
+>
+> (async () => {
+> 	await amunet.write(path.join(__dirname, 'README.md'), { a: '1', b: 'World', d: '4' });
+> 	//=> new content of README.md:
+> 	// [d]: # (4)
+> 	// [a]: # (1)
+> 	// [b]: # (World)
+> 	//
+> 	// # Doc
+> 	//
+> 	// Hello world
+> })();
+> ```
+
+### amunet.writeSync(filePath, objectAfter)
+
+Write synchronously a file (`filePath`) and change its content with object `objectAfter`.
+
+#### filePath
+
+Type: `string`
+
+#### objectAfter
+
+Type: `object`
+
+The object with all metadata as key\value pairs.
+
+#### return
+
+Nothing
+
+>Notes:
+> * If the file does not exist, the function returns an empty object.
+> * If the file does not contains metadata, the function returns an empty object.
+
+#### Example
+
+`README.md`:
+> ```txt
+>
+> [a]: # (1)
+> [b]: # (Hello)
+> [c]: # (3)
+>
+> # Doc
+>
+> Hello world
+> ```
+
+`index.js`:
+> ```javascript
+>
+> const path = require('path');
+> const amunet = require('amunet');
+>
+> amunet.writeSync(path.join(__dirname, 'README.md'), { a: '1', b: 'World', d: '4' });
+> //=> new content of README.md:
+> // [d]: # (4)
+> // [a]: # (1)
+> // [b]: # (World)
+> //
+> // # Doc
+> //
+> // Hello world
+> ```
 
 ## LICENSE
 

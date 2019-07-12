@@ -13,7 +13,7 @@ const getLocalMetadata = async filenamemarkdown => {
 	const result = await amunet.read(
 		path.join(__dirname, 'fixtures', `${filenamemarkdown}.md`)
 	);
-	return result.metadata;
+	return result;
 };
 
 const deleteContentFolderRecursiveSync = pathFolder => {
@@ -60,7 +60,7 @@ test.after.cb('Cleanup', t => {
 
 test('Read async', async t => {
 	const result = await amunet.read(path.join(__dirname, 'fixtures', 'two-metadata.md'));
-	t.deepEqual(result.metadata, {
+	t.deepEqual(result, {
 		a: '1',
 		b: '2'
 	});
@@ -68,7 +68,7 @@ test('Read async', async t => {
 
 test('Read sync', t => {
 	const result = amunet.readSync(path.join(__dirname, 'fixtures', 'two-metadata.md'));
-	t.deepEqual(result.metadata, {
+	t.deepEqual(result, {
 		a: '1',
 		b: '2'
 	});
@@ -76,12 +76,12 @@ test('Read sync', t => {
 
 test('Read async unknown file', async t => {
 	const result = await amunet.read(path.join(__dirname, 'fixtures', 'unknown.md'));
-	t.deepEqual(result.metadata, {});
+	t.deepEqual(result, {});
 });
 
 test('Read sync unknown file', t => {
 	const result = amunet.readSync(path.join(__dirname, 'fixtures', 'unknown.md'));
-	t.deepEqual(result.metadata, {});
+	t.deepEqual(result, {});
 });
 
 test('Read without metadata', async t => {
@@ -194,8 +194,8 @@ Hello world
 `
 	);
 	await amunet.write(filePath, {a: '1', b: '2'});
-	const result = await amunet.read(filePath);
-	t.deepEqual(result.contentFile, `
+	const result = await readFileAsync(filePath, 'utf8');
+	t.is(result, `
 [a]: # (1)
 [b]: # (2)
 
@@ -218,8 +218,8 @@ Hello world
 `
 	);
 	amunet.writeSync(filePath, {a: 1, b: 2});
-	const result = amunet.readSync(filePath);
-	t.deepEqual(result.contentFile, `
+	const result = fs.readFileSync(filePath, 'utf8');
+	t.is(result, `
 [a]: # (1)
 [b]: # (2)
 
@@ -252,8 +252,8 @@ test('Write sync with change', t => {
 Hello world
 `, 'utf8');
 	amunet.writeSync(filePath, {a: 'sync', b: 2, x: 24, d: 4, f: 'sync', y: 25, h: 'sync', i: 9, z: 26});
-	const file = amunet.readSync(filePath, 'utf8');
-	t.deepEqual(file.contentFile, `
+	const file = fs.readFileSync(filePath, 'utf8');
+	t.is(file, `
 [x]: # (24)
 [y]: # (25)
 [z]: # (26)
@@ -297,8 +297,8 @@ test('Write async with change', async t => {
 Hello world
 `, 'utf8');
 	await amunet.write(filePath, {a: 'async', b: 2, x: 24, d: 4, f: 'async', y: 25, h: 'async', i: 9, z: 26});
-	const file = await amunet.readSync(filePath, 'utf8');
-	t.deepEqual(file.contentFile, `
+	const file = await readFileAsync(filePath, 'utf8');
+	t.is(file, `
 [x]: # (24)
 [y]: # (25)
 [z]: # (26)
