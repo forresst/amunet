@@ -2,8 +2,8 @@
 const path = require('path');
 const fs = require('fs');
 const test = require('ava');
-const {writeSync} = require('..');
 const utils = require('./_utils');
+const {writeSync} = require('..');
 
 const outputDir = path.join(__dirname, 'fixtures', 'output', 'write-sync');
 

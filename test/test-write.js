@@ -1,8 +1,8 @@
 'use strict';
 const path = require('path');
 const test = require('ava');
-const {write} = require('..');
 const utils = require('./_utils');
+const {write} = require('..');
 
 const outputDir = path.join(__dirname, 'fixtures', 'output', 'write-async');
 
