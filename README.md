@@ -344,12 +344,12 @@ The object with all metadata as key\value pairs.
 
 Type: `object`
 
-- createFolderUnknown: create the folder of the file if the folder does not exist
+- `createFolderUnknown`: create the folder of the file if the folder does not exist
   * Type: `boolean`
-	* Default: `true`
-- createFileUnknown: create the file if the file does not exist
+  * Default: `true`
+- `createFileUnknown`: create the file if the file does not exist
   * Type: `boolean`
-	* Default: `true`
+  * Default: `true`
 
 #### return
 
@@ -406,12 +406,12 @@ The object with all metadata as key\value pairs.
 
 Type: `object`
 
-- createFolderUnknown: create the folder of the file if the folder does not exist
+- `createFolderUnknown`: create the folder of the file if the folder does not exist
   * Type: `boolean`
-	* Default: `true`
-- createFileUnknown: create the file if the file does not exist
+  * Default: `true`
+- `createFileUnknown`: create the file if the file does not exist
   * Type: `boolean`
-	* Default: `true`
+  * Default: `true`
 
 #### return
 

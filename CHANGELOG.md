@@ -1,3 +1,13 @@
+<a name="0.3.0"></a>
+# [0.3.0](https://github.com/forresst/amunet/compare/0.2.0...0.3.0) (2019-07-24)
+
+
+### feat
+
+* add options to `write` and `writeSync` ([b8f086c](https://github.com/forresst/amunet/commit/b8f086c))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](https://github.com/forresst/amunet/compare/0.1.0...0.2.0) (2019-07-12)
 
