@@ -19,8 +19,8 @@ test.after.cb('Cleanup', t => {
 	t.end();
 });
 
-test('Write sync into new file', t => {
-	const filePath = path.join(outputDir, 'write-sync-new-file.md');
+test('Write sync into new file with createFileUnknown by default', t => {
+	const filePath = path.join(outputDir, 'write-sync-new-file-option-default.md');
 	writeSync(filePath, {a: '1', b: '2'});
 	const result = fs.readFileSync(filePath, 'utf8');
 	t.is(result, `
@@ -29,10 +29,36 @@ test('Write sync into new file', t => {
 	);
 });
 
-test('Write sync into new file in folder unknown', t => {
-	const filePath = path.join(outputDir, 'unknownFolder', 'write-sync-unknown-folder.md');
+test('Write sync into new file with createFileUnknown: false', t => {
+	const filePath = path.join(outputDir, 'write-sync-new-file-option-false.md');
 	const error = t.throws(() => {
-		writeSync(filePath, {a: '1', b: '2'});
+		writeSync(filePath, {a: '1', b: '2'}, {createFileUnknown: false});
+	}, Error);
+	t.is(error.code, 'ENOENT');
+});
+
+test('Write sync into new file in folder unknown with createFolderUnknown by default', t => {
+	const filePath = path.join(outputDir, 'unknownFolder', 'write-sync-unknown-folder-option-default.md');
+	writeSync(filePath, {a: '1', b: '2'});
+	const result = fs.readFileSync(filePath, 'utf8');
+	t.is(result, `
+[a]: # (1)
+[b]: # (2)`
+	);
+});
+
+test('Write sync into new file in folder unknown with createFolderUnknown: false', t => {
+	const filePath = path.join(outputDir, 'unknownFolder2', 'write-sync-unknown-folder-option-false.md');
+	const error = t.throws(() => {
+		writeSync(filePath, {a: '1', b: '2'}, {createFolderUnknown: false});
+	}, Error);
+	t.is(error.code, 'ENOENT');
+});
+
+test('Write sync into new file in folder unknown with createFolderUnknown: false, createFileUnknown: false', t => {
+	const filePath = path.join(outputDir, 'unknownFolder3', 'write-sync-unknown-folder-option-all-false.md');
+	const error = t.throws(() => {
+		writeSync(filePath, {a: '1', b: '2'}, {createFolderUnknown: false, createFileUnknown: false});
 	}, Error);
 	t.is(error.code, 'ENOENT');
 });

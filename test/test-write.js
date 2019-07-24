@@ -18,8 +18,8 @@ test.after.cb('Cleanup', t => {
 	t.end();
 });
 
-test('Write async into new file', async t => {
-	const filePath = path.join(outputDir, 'write-async-new-file.md');
+test('Write async into new file with createFileUnknown by default', async t => {
+	const filePath = path.join(outputDir, 'write-async-new-file-option-default.md');
 	await write(filePath, {a: '1', b: '2'});
 	const result = await utils.readFileAsync(filePath, 'utf8');
 	t.is(result, `
@@ -28,9 +28,31 @@ test('Write async into new file', async t => {
 	);
 });
 
-test('Write async into new file in folder unknown', async t => {
-	const filePath = path.join(outputDir, 'unknownFolder', 'write-async-unknown-folder.md');
-	const error = await t.throwsAsync(write(filePath, {a: '1', b: '2'}));
+test('Write async into new file with createFileUnknown: false', async t => {
+	const filePath = path.join(outputDir, 'write-async-new-file-option-false.md');
+	const error = await t.throwsAsync(write(filePath, {a: '1', b: '2'}, {createFileUnknown: false}));
+	t.is(error.code, 'ENOENT');
+});
+
+test('Write async into new file in folder unknown with createFolderUnknown by default', async t => {
+	const filePath = path.join(outputDir, 'unknownFolder', 'write-async-unknown-folder-option-default.md');
+	await write(filePath, {a: '1', b: '2'});
+	const result = await utils.readFileAsync(filePath, 'utf8');
+	t.is(result, `
+[a]: # (1)
+[b]: # (2)`
+	);
+});
+
+test('Write async into new file in folder unknown with createFolderUnknown: false', async t => {
+	const filePath = path.join(outputDir, 'unknownFolder2', 'write-async-unknown-folder-option-false.md');
+	const error = await t.throwsAsync(write(filePath, {a: '1', b: '2'}, {createFolderUnknown: false}));
+	t.is(error.code, 'ENOENT');
+});
+
+test('Write async into new file in folder unknown with createFolderUnknown: false, createFileUnknown: false', async t => {
+	const filePath = path.join(outputDir, 'unknownFolder3', 'write-async-unknown-folder-option-all-false.md');
+	const error = await t.throwsAsync(write(filePath, {a: '1', b: '2'}, {createFolderUnknown: false, createFileUnknown: false}));
 	t.is(error.code, 'ENOENT');
 });
 

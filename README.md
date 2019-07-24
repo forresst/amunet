@@ -45,14 +45,16 @@ Amunet : markdown metadata hidden
     + [filePath](#filepath-1)
     + [return](#return-3)
     + [Example](#example-3)
-  * [amunet.write(filePath, objectAfter)](#amunetwritefilepath-objectafter)
+  * [amunet.write(filePath, objectAfter, options?)](#amunetwritefilepath-objectafter-options)
     + [filePath](#filepath-2)
     + [objectAfter](#objectafter-1)
+    + [options](#options)
     + [return](#return-4)
     + [Example](#example-4)
-  * [amunet.writeSync(filePath, objectAfter)](#amunetwritesyncfilepath-objectafter)
+  * [amunet.writeSync(filePath, objectAfter, options?)](#amunetwritesyncfilepath-objectafter-options)
     + [filePath](#filepath-3)
     + [objectAfter](#objectafter-2)
+    + [options](#options-1)
     + [return](#return-5)
     + [Example](#example-5)
 - [LICENSE](#license)
@@ -62,7 +64,7 @@ Amunet : markdown metadata hidden
 
 The goal is to embed invisible metadata in a Markdown file when this file will be rendered on a web page, for example under Github.
 
-There is a solution that is described on [Stackoverflow](https://stackoverflow.com/questions/4823468/comments-in-markdown/20885980#32190021) to add comments that will be invisible when rendering. To summarize, the following syntax allows you to include comments that will not be rendered on an html page:
+There is a solution that is described on [Stackoverflow](https://stackoverflow.com/questions/4823468/comments-in-markdown/20885980#32190021) to add comments that will be invisible when rendering. To summarize, the following syntax allows you to include comments that will not be rendered on an HTML page:
 
 ```txt
 
@@ -186,10 +188,10 @@ The object with the metadata as key\value pairs.
 Add/change/remove the content of the `input` string with the object `objectAfter`. Returns a `string` with the modified content.
 
 > Notes:
-> * If a key does not exist in the `input`string  and exist in object `objectAfter`, the key/value pairs is appended to the content with the value of `objectAfter`.
-> * If a key exist in the `input` string and exist in object `objectAfter` and the value is changed, the key/value pair is changed in the content with the value of `objectAfter`.
-> * If a key exist in the `input` string and exist in object `objectAfter` and the value is not changed, the content is not changed.
-> * If a key exist in the `input` string but does not exist in object `objectAfter`, the key/value pair is removed.
+> * If a key does not exist in the `input` string and exists in object `objectAfter`, the key/value pair is appended to the content with the value of `objectAfter`.
+> * If a key exists in the `input` string and exists in object `objectAfter` and the value is changed, the key/value pair is changed in the content with the value of `objectAfter`.
+> * If a key exists in the `input` string and exists in object `objectAfter` and the value is not changed, the content is not changed.
+> * If a key exists in the `input` string but does not exist in object `objectAfter`, the key/value pair is removed.
 
 #### input
 
@@ -250,11 +252,11 @@ Type: `string`
 
 Type: `Promise<object>`
 
-The object contains the metadata as key\value pairs found in specified file.
+The object contains the metadata as key\value pairs found in the specified file.
 
 >Notes:
 > * If the file does not exist, the function returns an empty object.
-> * If the file does not contains metadata, the function returns an empty object.
+> * If the file does not contain metadata, the function returns an empty object.
 
 #### Example
 
@@ -294,11 +296,11 @@ Type: `string`
 
 Type: `object`
 
-The object contains the metadata as key\value pairs found in specified file.
+The object contains the metadata as key\value pairs found in the specified file.
 
 >Notes:
 > * If the file does not exist, the function returns an empty object.
-> * If the file does not contains metadata, the function returns an empty object.
+> * If the file does not contain metadata, the function returns an empty object.
 
 #### Example
 
@@ -324,7 +326,7 @@ The object contains the metadata as key\value pairs found in specified file.
 > //=> { a: '1', b: 'Hello' }
 > ```
 
-### amunet.write(filePath, objectAfter)
+### amunet.write(filePath, objectAfter, options?)
 
 Write asynchronously a file (`filePath`) and change its content with object `objectAfter`.
 
@@ -338,13 +340,20 @@ Type: `object`
 
 The object with all metadata as key\value pairs.
 
+#### options
+
+Type: `object`
+
+- createFolderUnknown: create the folder of the file if the folder does not exist
+  * Type: `boolean`
+	* Default: `true`
+- createFileUnknown: create the file if the file does not exist
+  * Type: `boolean`
+	* Default: `true`
+
 #### return
 
 Type: `Promise`
-
->Notes:
-> * If the file does not exist, the file is created.
-> * If the the folder of file does not exist, the file is not created.
 
 #### Example
 
@@ -379,7 +388,7 @@ Type: `Promise`
 > })();
 > ```
 
-### amunet.writeSync(filePath, objectAfter)
+### amunet.writeSync(filePath, objectAfter, options?)
 
 Write synchronously a file (`filePath`) and change its content with object `objectAfter`.
 
@@ -393,13 +402,20 @@ Type: `object`
 
 The object with all metadata as key\value pairs.
 
+#### options
+
+Type: `object`
+
+- createFolderUnknown: create the folder of the file if the folder does not exist
+  * Type: `boolean`
+	* Default: `true`
+- createFileUnknown: create the file if the file does not exist
+  * Type: `boolean`
+	* Default: `true`
+
 #### return
 
 Nothing
-
->Notes:
-> * If the file does not exist, the function returns an empty object.
-> * If the file does not contains metadata, the function returns an empty object.
 
 #### Example
 

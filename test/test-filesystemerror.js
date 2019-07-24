@@ -4,18 +4,18 @@ const amunet = require('..');
 
 test.beforeEach.cb(t => {
 	mockfs({
-		'/some/test/directory': {
-			'some-file.txt': mockfs.file({
+		'/test/directory': {
+			'file-denied.txt': mockfs.file({
 				content: 'file content here',
 				mode: 0
-			}),
-			'write-sync-separate.md': mockfs.file({
-				content: '\n[a]: # (1)\n\n[b]: # (2)\n\n[c]: # (3)\n\n# Doc\n\nHello world'
-			}),
-			'write-async-separate.md': mockfs.file({
-				content: '\n[a]: # (1)\n\n[b]: # (2)\n\n[c]: # (3)\n\n# Doc\n\nHello world'
 			})
-		}
+		},
+		'/test/directory-denied': mockfs.directory({
+			mode: 0,
+			items: {
+				'file-in-denied-directory': 'file content here'
+			}
+		})
 	});
 	t.end();
 });
@@ -26,25 +26,61 @@ test.afterEach.cb(t => {
 });
 
 test('Read async file when permission denied', async t => {
-	const error = await t.throwsAsync(amunet.read('/some/test/directory/some-file.txt'));
+	const error = await t.throwsAsync(amunet.read('/test/directory/file-denied.txt'));
 	t.is(error.code, 'EACCES');
 });
 
 test('Read sync file when permission denied', t => {
 	const error = t.throws(() => {
-		amunet.readSync('/some/test/directory/some-file.txt');
+		amunet.readSync('/test/directory/file-denied.txt');
 	}, Error);
 	t.is(error.code, 'EACCES');
 });
 
 test('Write async file when permission denied', async t => {
-	const error = await t.throwsAsync(amunet.write('/some/test/directory/some-file.txt'));
+	const error = await t.throwsAsync(amunet.write('/test/directory/file-denied.txt'));
 	t.is(error.code, 'EACCES');
 });
 
 test('Write sync file when permission denied', t => {
 	const error = t.throws(() => {
-		amunet.writeSync('/some/test/directory/some-file.txt');
+		amunet.writeSync('/test/directory/file-denied.txt');
+	}, Error);
+	t.is(error.code, 'EACCES');
+});
+
+test('Read async file in directory permission denied', async t => {
+	const error = await t.throwsAsync(amunet.read('/test/directory-denied/file-in-denied-directory.txt'));
+	t.is(error.code, 'EACCES');
+});
+
+test('Read sync file in directory permission denied', t => {
+	const error = t.throws(() => {
+		amunet.readSync('/test/directory-denied/file-in-denied-directory.txt');
+	}, Error);
+	t.is(error.code, 'EACCES');
+});
+
+test('Write async file in directory permission denied', async t => {
+	const error = await t.throwsAsync(amunet.write('/test/directory-denied/file-in-denied-directory.txt'));
+	t.is(error.code, 'EACCES');
+});
+
+test('Write sync file in directory permission denied', t => {
+	const error = t.throws(() => {
+		amunet.writeSync('/test/directory-denied/file-in-denied-directory.txt');
+	}, Error);
+	t.is(error.code, 'EACCES');
+});
+
+test('Write async file in sub-directory of directory permission denied', async t => {
+	const error = await t.throwsAsync(amunet.write('/test/directory-denied/sub-dir/file.txt'));
+	t.is(error.code, 'EACCES');
+});
+
+test('Write sync file in sub-directory of directory permission denied', t => {
+	const error = t.throws(() => {
+		amunet.writeSync('/test/directory-denied/sub-dir/file.txt');
 	}, Error);
 	t.is(error.code, 'EACCES');
 });

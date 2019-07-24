@@ -13,6 +13,7 @@ const deleteContentFolderRecursiveSync = pathFolder => {
 			const curPath = path.join(pathFolder, file);
 			if (fs.lstatSync(curPath).isDirectory()) {
 				deleteContentFolderRecursiveSync(curPath);
+				fs.rmdirSync(curPath);
 			} else {
 				fs.unlinkSync(curPath);
 			}

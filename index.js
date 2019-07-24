@@ -1,6 +1,8 @@
 'use strict';
+const path = require('path');
 const {promisify} = require('util');
 const fs = require('fs');
+const makeDir = require('make-dir');
 
 const regexpKeyValue = new RegExp(/^[\t ]*\[[\t ]*([^[(\s\])\t]+)[\t ]*\]:[\t ]*#[\t ]+\(([^[(\])\t]+)\)$/, 'gm');
 const readFileAsync = promisify(fs.readFile);
@@ -62,25 +64,10 @@ const stringify = (input, objectAfter) => {
 	return result;
 };
 
-const read = async filePath => new Promise((resolve, reject) => {
-	readFileAsync(filePath, 'utf8', (error, data) => {
-		if (error) {
-			// The file doesn't exist
-			if (error.code === 'ENOENT') {
-				return resolve({});
-			}
-
-			return reject(error);
-		}
-
-		return resolve(parse(data));
-	});
-});
-
-const readSync = filePath => {
+const read = async filePath => {
+	let data = '';
 	try {
-		const data = fs.readFileSync(filePath, 'utf8');
-		return parse(data);
+		data = await readFileAsync(filePath, 'utf8');
 	} catch (error) {
 		// The file doesn't exist
 		if (error.code === 'ENOENT') {
@@ -89,6 +76,24 @@ const readSync = filePath => {
 
 		throw error;
 	}
+
+	return parse(data);
+};
+
+const readSync = filePath => {
+	let data = '';
+	try {
+		data = fs.readFileSync(filePath, 'utf8');
+	} catch (error) {
+		// The file doesn't exist
+		if (error.code === 'ENOENT') {
+			return {};
+		}
+
+		throw error;
+	}
+
+	return parse(data);
 };
 
 module.exports.parse = parse;
@@ -99,31 +104,54 @@ module.exports.readSync = readSync;
 
 module.exports.stringify = stringify;
 
-module.exports.write = async (filePath, objectAfter) => new Promise((resolve, reject) => {
-	readFileAsync(filePath, 'utf8', (error, data) => {
-		if (error) {
-			// The file doesn't exist
-			if (error.code === 'ENOENT') {
-				return resolve(writeFileAsync(filePath, stringify('', objectAfter), 'utf8'));
-			}
+module.exports.write = async (filePath, objectAfter, options) => {
+	options = {
+		createFolderUnknown: true,
+		createFileUnknown: true,
+		...options
+	};
 
-			return reject(error);
-		}
-
-		return resolve(writeFileAsync(filePath, stringify(data, objectAfter), 'utf8'));
-	});
-});
-
-module.exports.writeSync = (filePath, objectAfter) => {
+	let data = '';
 	try {
-		const data = fs.readFileSync(filePath, 'utf8');
-		return fs.writeFileSync(filePath, stringify(data, objectAfter), 'utf8');
+		data = await readFileAsync(filePath, 'utf8');
 	} catch (error) {
 		// The file doesn't exist
-		if (error.code === 'ENOENT') {
+		if (error.code === 'ENOENT' && options.createFileUnknown === true) {
+			if (options.createFolderUnknown === true) {
+				await makeDir(path.dirname(filePath));
+			}
+
+			return writeFileAsync(filePath, stringify('', objectAfter), 'utf8');
+		}
+
+		throw error;
+	}
+
+	return writeFileAsync(filePath, stringify(data, objectAfter), 'utf8');
+};
+
+module.exports.writeSync = (filePath, objectAfter, options) => {
+	options = {
+		createFolderUnknown: true,
+		createFileUnknown: true,
+		...options
+	};
+
+	let data = '';
+	try {
+		data = fs.readFileSync(filePath, 'utf8');
+	} catch (error) {
+		// The file doesn't exist
+		if (error.code === 'ENOENT' && options.createFileUnknown === true) {
+			if (options.createFolderUnknown === true) {
+				makeDir.sync(path.dirname(filePath));
+			}
+
 			return fs.writeFileSync(filePath, stringify('', objectAfter), 'utf8');
 		}
 
 		throw error;
 	}
+
+	return fs.writeFileSync(filePath, stringify(data, objectAfter), 'utf8');
 };
