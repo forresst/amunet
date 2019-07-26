@@ -38,16 +38,49 @@ Hello world
 	t.is(stringify(myString, {}), myString);
 });
 
+test('The `stringify` function with an entered string and `objectAfter` with one element should return a string with one metadata #1', t => {
+	const myString = `# Doc
+
+Hello world
+`;
+	const expectedString = `
+[a]: # (1)
+
+# Doc
+
+Hello world
+`;
+	t.is(stringify(myString, {a: 1}), expectedString);
+});
+
+test('The `stringify` function with an entered string and `objectAfter` with one element should return a string with one metadata #2', t => {
+	const myString = `
+# Doc
+
+Hello world
+`;
+	const expectedString = `
+[a]: # (1)
+
+# Doc
+
+Hello world
+`;
+	t.is(stringify(myString, {a: 1}), expectedString);
+});
+
 test('The `stringify` function with an empty string and `objectAfter` with one element should return a string with one metadata', t => {
 	const expectedString = `
-[a]: # (1)`;
+[a]: # (1)
+`;
 	t.is(stringify('', {a: 1}), expectedString);
 });
 
 test('The `stringify` function with an empty string and `objectAfter` with two elements should return a string with two metadata', t => {
 	const expectedString = `
 [a]: # (1)
-[b]: # (2)`;
+[b]: # (2)
+`;
 	t.is(stringify('', {a: 1, b: 2}), expectedString);
 });
 
@@ -120,9 +153,27 @@ Hello world
 	t.is(stringify(myString, {b: 2, a: 'changed'}), expectedString);
 });
 
-test('The `stringify` function with a adding of value with an already existing element', t => {
+test('The `stringify` function with a adding of value with an already existing element # 1', t => {
 	const myString = `
 [a]: # (1)
+
+# Doc
+
+Hello world
+`;
+	const expectedString = `
+[b]: # (added)
+[a]: # (1)
+
+# Doc
+
+Hello world
+`;
+	t.is(stringify(myString, {a: 1, b: 'added'}), expectedString);
+});
+
+test('The `stringify` function with a adding of value with an already existing element # 2', t => {
+	const myString = `[a]: # (1)
 
 # Doc
 
@@ -284,4 +335,3 @@ Hello world
 `;
 	t.is(stringify(myString, {a: 'async', b: 2, x: 24, d: 4, f: 'async', y: 25, h: 'async', i: 9, z: 26}), expectedString);
 });
-

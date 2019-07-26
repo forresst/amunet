@@ -25,7 +25,8 @@ test('Write sync into new file with createFileUnknown by default', t => {
 	const result = fs.readFileSync(filePath, 'utf8');
 	t.is(result, `
 [a]: # (1)
-[b]: # (2)`
+[b]: # (2)
+`
 	);
 });
 
@@ -43,7 +44,8 @@ test('Write sync into new file in folder unknown with createFolderUnknown by def
 	const result = fs.readFileSync(filePath, 'utf8');
 	t.is(result, `
 [a]: # (1)
-[b]: # (2)`
+[b]: # (2)
+`
 	);
 });
 

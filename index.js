@@ -4,7 +4,15 @@ const {promisify} = require('util');
 const fs = require('fs');
 const makeDir = require('make-dir');
 
-const regexpKeyValue = new RegExp(/^[\t ]*\[[\t ]*([^[(\s\])\t]+)[\t ]*\]:[\t ]*#[\t ]+\(([^[(\])\t]+)\)$/, 'gm');
+const beforeKey = '[\\t ]*\\[[\\t ]*';
+const nameKey = '[^[(\\s\\])\\t]+';
+const betweenKeyValue = '[\\t ]*\\]:[\\t ]*#[\\t ]+\\(';
+const valValue = '[^[(\\])\\t]+';
+const afterValue = '\\)';
+const checkNewLine = '[\\r\\n|\\r|\\n]?';
+const regexpKeyValue = new RegExp('^' + beforeKey + '(' + nameKey + ')' + betweenKeyValue + '(' + valValue + ')' + afterValue + '$', 'gm');
+const regexpBegin = new RegExp('^' + checkNewLine + beforeKey + nameKey + betweenKeyValue + valValue + afterValue, 'i');
+
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
@@ -34,29 +42,43 @@ const stringify = (input, objectAfter) => {
 	}
 
 	const objectBefore = parse(input);
+	const newLine = '\n';
 
 	// Add metadata
 	let addContent = '';
 	Object.keys(objectAfter).forEach(key => {
 		if (objectBefore[key] === undefined) {
-			addContent += `
-[${key}]: # (${objectAfter[key]})`;
+			addContent += newLine + `[${key}]: # (${objectAfter[key]})`;
 		}
 	});
-	let result = addContent + input;
+	let result = input;
+	if (addContent !== '') {
+		// To avoid to have a metadata and the file content on same line
+		if (input.substr(0, 1) !== newLine) {
+			addContent += newLine;
+		}
+
+		// The file content does not begin by a metadata : we add a new line after content added
+		// The goal is to separate the metadata from the rest of the content with an empty line
+		if (input !== '' && !input.match(regexpBegin)) {
+			addContent += newLine;
+		}
+
+		result = addContent + input;
+	}
 
 	Object.keys(objectBefore).forEach(key => {
 		// Delete metadata
 		if (objectAfter[key] === undefined) {
-			const regexpKey = new RegExp('^[\t ]*\\[[\t ]*' + key + '[\t ]*\\]:[\t ]*#[\t ]+\\([^[(\\])\t]+\\)[\\r\\n|\\r|\\n]?', 'gm');
-			result = result.replace(regexpKey, '');
+			const regexpDel = new RegExp('^' + beforeKey + key + betweenKeyValue + valValue + afterValue + checkNewLine, 'gm');
+			result = result.replace(regexpDel, '');
 			return;
 		}
 
 		// Change metadata
 		if (objectBefore[key] !== objectAfter[key]) {
-			const regexpKey = new RegExp('^[\t ]*\\[[\t ]*' + key + '[\t ]*\\]:[\t ]*#[\t ]+\\([^[(\\])\t]+\\)$', 'gm');
-			result = result.replace(regexpKey, `[${key}]: # (${objectAfter[key]})`
+			const regexpChg = new RegExp('^' + beforeKey + key + betweenKeyValue + valValue + afterValue + '$', 'gm');
+			result = result.replace(regexpChg, `[${key}]: # (${objectAfter[key]})`
 			);
 		}
 	});

@@ -20,6 +20,42 @@ Amunet : markdown metadata hidden
 [![Watch on GitHub](https://img.shields.io/github/watchers/forresst/amunet.svg?style=social)](https://github.com/forresst/amunet/watchers)
 [![Star on GitHub](https://img.shields.io/github/stars/forresst/amunet.svg?style=social)](https://github.com/forresst/amunet/stargazers)
 
+## The goal
+
+The goal is to embed invisible metadata in a Markdown file when this file will be rendered on a web page, for example under Github.
+
+There is a solution that is described on [Stackoverflow](https://stackoverflow.com/questions/4823468/comments-in-markdown/20885980#32190021) to add comments that will be invisible when rendering. To summarize, the following syntax allows you to include comments that will not be rendered on an HTML page:
+
+```Markdown
+
+[comment]: # (Hello world)
+
+```
+
+In general, this approach should work with most Markdown parsers, since it's part of the core specification.
+
+The complementary idea for adding metadata is to produce the metadata as key/value pairs. Just place the key between the brackets, and the value between the parentheses:
+
+```Markdown
+
+[key1]: # (value1)
+[key2]: # (value2)
+[a]: # (1)
+[foo] # (bar)
+
+```
+
+Amunet is the tool to parse and produce this concept easily in your Markdown files.
+
+Note that this README.md file contains a `filename` metadata with the value `README.md`. It is not visible on this web page, but if you see the [contents of the file in the second line](https://github.com/forresst/amunet/blob/master/README.md#L2), you can see this metadata:
+
+```Markdown
+
+[filename]: # (README.md)
+
+…
+```
+
 ## Table of Contents
 
 <!-- ⛔️ AUTO-GENERATED-CONTENT:START (TOC) -->
@@ -60,33 +96,6 @@ Amunet : markdown metadata hidden
 - [LICENSE](#license)
 <!-- ⛔️ AUTO-GENERATED-CONTENT:END -->
 
-## The goal
-
-The goal is to embed invisible metadata in a Markdown file when this file will be rendered on a web page, for example under Github.
-
-There is a solution that is described on [Stackoverflow](https://stackoverflow.com/questions/4823468/comments-in-markdown/20885980#32190021) to add comments that will be invisible when rendering. To summarize, the following syntax allows you to include comments that will not be rendered on an HTML page:
-
-```txt
-
-[comment]: # (Hello world)
-
-```
-
-In general, this approach should work with most Markdown parsers, since it's part of the core specification.
-
-The complementary idea for adding metadata is to produce the metadata as key/value pairs. Just place the key between the brackets, and the value between the parentheses:
-
-```txt
-
-[key1]: # (value1)
-[key2]: # (value2)
-[a]: # (1)
-[foo] # (bar)
-
-```
-
-Amunet is the tool to parse and produce this concept easily in your Markdown files.
-
 ## Installation
 
 This module is distributed via [npm](https://www.npmjs.com/) which is bundled with [node](https://nodejs.org) and should be installed as one of your project's `devDependencies`:
@@ -114,9 +123,9 @@ console.log(file.metadata);
 // Read the file asynchronously
 // -----------------------------
 (async () => {
-	const fileSync = await amunet.read(path.join(__dirname, 'README.md'));
-	console.log(fileSync.metadata);
-	// With the 'README.md' file of this package => { filename: 'README.md' }
+  const fileSync = await amunet.read(path.join(__dirname, 'README.md'));
+  console.log(fileSync.metadata);
+  // With the 'README.md' file of this package => { filename: 'README.md' }
 })();
 ```
 
@@ -127,19 +136,19 @@ const https = require('https');
 const amunet = require('amunet');
 
 const getRemoteMetadata = url => new Promise((resolve, reject) => {
-	https.get(url, resp => {
-		resp.once('data', buffer => {
-			resp.destroy();
-			resolve(amunet.parse(buffer.toString('utf8')));
-		});
-	}).on('error', error => {
-		reject(error);
-	});
+  https.get(url, resp => {
+    resp.once('data', buffer => {
+      resp.destroy();
+      resolve(amunet.parse(buffer.toString('utf8')));
+    });
+  }).on('error', error => {
+    reject(error);
+  });
 });
 
 (async () => {
-	console.log(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'));
-	// With the 'README.md' file of this package => { filename: 'README.md' }
+  console.log(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'));
+  // With the 'README.md' file of this package => { filename: 'README.md' }
 })();
 ```
 
@@ -166,7 +175,8 @@ The object with the metadata as key\value pairs.
 #### Example
 
 `index.js`:
-> ```javascript
+
+> ```js
 >
 > const amunet = require('amunet');
 >
@@ -188,10 +198,11 @@ The object with the metadata as key\value pairs.
 Add/change/remove the content of the `input` string with the object `objectAfter`. Returns a `string` with the modified content.
 
 > Notes:
-> * If a key does not exist in the `input` string and exists in object `objectAfter`, the key/value pair is appended to the content with the value of `objectAfter`.
-> * If a key exists in the `input` string and exists in object `objectAfter` and the value is changed, the key/value pair is changed in the content with the value of `objectAfter`.
-> * If a key exists in the `input` string and exists in object `objectAfter` and the value is not changed, the content is not changed.
-> * If a key exists in the `input` string but does not exist in object `objectAfter`, the key/value pair is removed.
+>
+> - If a key does not exist in the `input` string and exists in object `objectAfter`, the key/value pair is appended to the content with the value of `objectAfter`.
+> - If a key exists in the `input` string and exists in object `objectAfter` and the value is changed, the key/value pair is changed in the content with the value of `objectAfter`.
+> - If a key exists in the `input` string and exists in object `objectAfter` and the value is not changed, the content is not changed.
+> - If a key exists in the `input` string but does not exist in object `objectAfter`, the key/value pair is removed.
 
 #### input
 
@@ -214,7 +225,8 @@ The string with the content changed.
 #### Example
 
 `index.js`:
-> ```javascript
+
+> ```js
 >
 > const amunet = require('amunet');
 >
@@ -255,13 +267,15 @@ Type: `Promise<object>`
 The object contains the metadata as key\value pairs found in the specified file.
 
 >Notes:
-> * If the file does not exist, the function returns an empty object.
-> * If the file does not contain metadata, the function returns an empty object.
+>
+> - If the file does not exist, the function returns an empty object.
+> - If the file does not contain metadata, the function returns an empty object.
 
 #### Example
 
 `README.md`:
-> ```txt
+
+> ```Markdown
 >
 > [a]: # (1)
 > [b]: # (Hello)
@@ -272,15 +286,15 @@ The object contains the metadata as key\value pairs found in the specified file.
 > ```
 
 `index.js`:
-> ```javascript
->
+
+> ```js
 > const path = require('path');
 > const amunet = require('amunet');
 >
 > (async () => {
-> 	const fileAsync = await amunet.read(path.join(__dirname, 'README.md'));
-> 	console.log(fileAsync);
-> 	//=> { a: '1', b: 'Hello' }
+>   const fileAsync = await amunet.read(path.join(__dirname, 'README.md'));
+>   console.log(fileAsync);
+>   //=> { a: '1', b: 'Hello' }
 > })();
 > ```
 
@@ -299,13 +313,15 @@ Type: `object`
 The object contains the metadata as key\value pairs found in the specified file.
 
 >Notes:
-> * If the file does not exist, the function returns an empty object.
-> * If the file does not contain metadata, the function returns an empty object.
+>
+> - If the file does not exist, the function returns an empty object.
+> - If the file does not contain metadata, the function returns an empty object.
 
 #### Example
 
 `README.md`:
-> ```txt
+
+> ```Markdown
 >
 > [a]: # (1)
 > [b]: # (Hello)
@@ -316,7 +332,8 @@ The object contains the metadata as key\value pairs found in the specified file.
 > ```
 
 `index.js`:
-> ```javascript
+
+> ```js
 >
 > const path = require('path');
 > const amunet = require('amunet');
@@ -345,11 +362,11 @@ The object with all metadata as key\value pairs.
 Type: `object`
 
 - `createFolderUnknown`: create the folder of the file if the folder does not exist
-  * Type: `boolean`
-  * Default: `true`
+  - Type: `boolean`
+  - Default: `true`
 - `createFileUnknown`: create the file if the file does not exist
-  * Type: `boolean`
-  * Default: `true`
+  - Type: `boolean`
+  - Default: `true`
 
 #### return
 
@@ -358,7 +375,8 @@ Type: `Promise`
 #### Example
 
 `README.md`:
-> ```txt
+
+> ```Markdown
 >
 > [a]: # (1)
 > [b]: # (Hello)
@@ -370,21 +388,22 @@ Type: `Promise`
 > ```
 
 `index.js`:
-> ```javascript
+
+> ```js
 >
 > const path = require('path');
 > const amunet = require('amunet');
 >
 > (async () => {
-> 	await amunet.write(path.join(__dirname, 'README.md'), { a: '1', b: 'World', d: '4' });
-> 	//=> new content of README.md:
-> 	// [d]: # (4)
-> 	// [a]: # (1)
-> 	// [b]: # (World)
-> 	//
-> 	// # Doc
-> 	//
-> 	// Hello world
+>   await amunet.write(path.join(__dirname, 'README.md'), { a: '1', b: 'World', d: '4' });
+>   //=> new content of README.md:
+>   // [d]: # (4)
+>   // [a]: # (1)
+>   // [b]: # (World)
+>   //
+>   // # Doc
+>   //
+>   // Hello world
 > })();
 > ```
 
@@ -407,11 +426,11 @@ The object with all metadata as key\value pairs.
 Type: `object`
 
 - `createFolderUnknown`: create the folder of the file if the folder does not exist
-  * Type: `boolean`
-  * Default: `true`
+  - Type: `boolean`
+  - Default: `true`
 - `createFileUnknown`: create the file if the file does not exist
-  * Type: `boolean`
-  * Default: `true`
+  - Type: `boolean`
+  - Default: `true`
 
 #### return
 
@@ -420,7 +439,8 @@ Nothing
 #### Example
 
 `README.md`:
-> ```txt
+
+> ```Markdown
 >
 > [a]: # (1)
 > [b]: # (Hello)
@@ -432,7 +452,8 @@ Nothing
 > ```
 
 `index.js`:
-> ```javascript
+
+> ```js
 >
 > const path = require('path');
 > const amunet = require('amunet');

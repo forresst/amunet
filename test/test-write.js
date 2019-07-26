@@ -24,7 +24,8 @@ test('Write async into new file with createFileUnknown by default', async t => {
 	const result = await utils.readFileAsync(filePath, 'utf8');
 	t.is(result, `
 [a]: # (1)
-[b]: # (2)`
+[b]: # (2)
+`
 	);
 });
 
@@ -40,7 +41,8 @@ test('Write async into new file in folder unknown with createFolderUnknown by de
 	const result = await utils.readFileAsync(filePath, 'utf8');
 	t.is(result, `
 [a]: # (1)
-[b]: # (2)`
+[b]: # (2)
+`
 	);
 });
 
