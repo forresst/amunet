@@ -1,6 +1,6 @@
 {
 	"name": "amunet",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "Amunet : markdown metadata hidden",
 	"license": "MIT",
 	"main": "index.js",

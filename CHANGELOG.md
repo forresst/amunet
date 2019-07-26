@@ -1,3 +1,12 @@
+<a name="0.3.1"></a>
+## [0.3.1](https://github.com/forresst/amunet/compare/0.3.0...0.3.1) (2019-07-26)
+
+### fix
+
+* fix bug for new line missing ([eb687d7](https://github.com/forresst/amunet/commit/eb687d7))
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](https://github.com/forresst/amunet/compare/0.2.0...0.3.0) (2019-07-24)
 

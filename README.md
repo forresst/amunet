@@ -187,7 +187,7 @@ The object with the metadata as key\value pairs.
 > # Doc
 >
 > Hello world
-> `
+> `;
 >
 > console.log(amunet.parse(inputString));
 > //=> { a: '1', b: 'Hello' }
@@ -238,7 +238,7 @@ The string with the content changed.
 > # Doc
 >
 > Hello world
-> `
+> `;
 >
 > console.log(amunet.stringify(inputString, { a: '1', b: 'World', d: '4' }));
 > //=> `
