@@ -54,7 +54,7 @@ const stringify = (input, objectAfter) => {
 	let result = input;
 	if (addContent !== '') {
 		// To avoid to have a metadata and the file content on same line
-		if (input.substr(0, 1) !== newLine) {
+		if (input.slice(0, 1) !== newLine) {
 			addContent += newLine;
 		}
 
