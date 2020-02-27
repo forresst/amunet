@@ -17,13 +17,19 @@ const getRemoteMetadata = url => new Promise((resolve, reject) => {
 test('The `parse` function without arguments should throw an error', t => {
 	t.throws(() => {
 		parse();
-	}, /Expected the `input` argument to be of type `String`, got `undefined`/);
+	}, {
+		instanceOf: TypeError,
+		message: 'Expected the `input` argument to be of type `String`, got `undefined`'
+	});
 });
 
 test('If the argument of the `parse` function is not a String it should throw an error', t => {
 	t.throws(() => {
 		parse({});
-	}, /Expected the `input` argument to be of type `String`, got `object`/);
+	}, {
+		instanceOf: TypeError,
+		message: 'Expected the `input` argument to be of type `String`, got `object`'
+	});
 });
 
 test('The `parse` function with an empty string argument should return an empty object', async t => {

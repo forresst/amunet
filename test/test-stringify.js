@@ -5,25 +5,37 @@ const {stringify} = require('..');
 test('The `stringify` function without arguments should throw an error', t => {
 	t.throws(() => {
 		stringify();
-	}, /Expected the `input` argument to be of type `String`, got `undefined`/);
+	}, {
+		instanceOf: TypeError,
+		message: 'Expected the `input` argument to be of type `String`, got `undefined`'
+	});
 });
 
 test('If the first argument of the `stringify` function is not a string, an error should be thrown', t => {
 	t.throws(() => {
 		stringify({});
-	}, /Expected the `input` argument to be of type `String`, got `object`/);
+	}, {
+		instanceOf: TypeError,
+		message: 'Expected the `input` argument to be of type `String`, got `object`'
+	});
 });
 
 test('The `stringify` function with one argument should throw an error', t => {
 	t.throws(() => {
 		stringify('');
-	}, /Expected the `objectAfter` argument to be of type `Object`, got `undefined`/);
+	}, {
+		instanceOf: TypeError,
+		message: 'Expected the `objectAfter` argument to be of type `Object`, got `undefined`'
+	});
 });
 
 test('If the second argument of the `stringify` function is not a object, an error should be thrown', t => {
 	t.throws(() => {
 		stringify('', '');
-	}, /Expected the `objectAfter` argument to be of type `Object`, got `string`/);
+	}, {
+		instanceOf: TypeError,
+		message: 'Expected the `objectAfter` argument to be of type `Object`, got `string`'
+	});
 });
 
 test('The `stringify` function without metadata should return a empty string', t => {

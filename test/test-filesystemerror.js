@@ -33,7 +33,9 @@ test('Read async file when permission denied', async t => {
 test('Read sync file when permission denied', t => {
 	const error = t.throws(() => {
 		amunet.readSync('/test/directory/file-denied.txt');
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'EACCES');
 });
 
@@ -45,7 +47,9 @@ test('Write async file when permission denied', async t => {
 test('Write sync file when permission denied', t => {
 	const error = t.throws(() => {
 		amunet.writeSync('/test/directory/file-denied.txt');
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'EACCES');
 });
 
@@ -57,7 +61,9 @@ test('Read async file in directory permission denied', async t => {
 test('Read sync file in directory permission denied', t => {
 	const error = t.throws(() => {
 		amunet.readSync('/test/directory-denied/file-in-denied-directory.txt');
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'EACCES');
 });
 
@@ -69,7 +75,9 @@ test('Write async file in directory permission denied', async t => {
 test('Write sync file in directory permission denied', t => {
 	const error = t.throws(() => {
 		amunet.writeSync('/test/directory-denied/file-in-denied-directory.txt');
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'EACCES');
 });
 
@@ -81,6 +89,8 @@ test('Write async file in sub-directory of directory permission denied', async t
 test('Write sync file in sub-directory of directory permission denied', t => {
 	const error = t.throws(() => {
 		amunet.writeSync('/test/directory-denied/sub-dir/file.txt');
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'EACCES');
 });

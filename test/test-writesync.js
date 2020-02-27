@@ -34,7 +34,9 @@ test('Write sync into new file with createFileUnknown: false', t => {
 	const filePath = path.join(outputDir, 'write-sync-new-file-option-false.md');
 	const error = t.throws(() => {
 		writeSync(filePath, {a: '1', b: '2'}, {createFileUnknown: false});
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'ENOENT');
 });
 
@@ -53,7 +55,9 @@ test('Write sync into new file in folder unknown with createFolderUnknown: false
 	const filePath = path.join(outputDir, 'unknownFolder2', 'write-sync-unknown-folder-option-false.md');
 	const error = t.throws(() => {
 		writeSync(filePath, {a: '1', b: '2'}, {createFolderUnknown: false});
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'ENOENT');
 });
 
@@ -61,7 +65,9 @@ test('Write sync into new file in folder unknown with createFolderUnknown: false
 	const filePath = path.join(outputDir, 'unknownFolder3', 'write-sync-unknown-folder-option-all-false.md');
 	const error = t.throws(() => {
 		writeSync(filePath, {a: '1', b: '2'}, {createFolderUnknown: false, createFileUnknown: false});
-	}, Error);
+	}, {
+		instanceOf: Error
+	});
 	t.is(error.code, 'ENOENT');
 });
 
