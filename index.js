@@ -7,11 +7,11 @@ const makeDir = require('make-dir');
 const beforeKey = '[\\t ]*\\[[\\t ]*';
 const nameKey = '[^[(\\s\\])\\t]+';
 const betweenKeyValue = '[\\t ]*\\]:[\\t ]*#[\\t ]+\\(';
-const valValue = '[^[(\\])\\t]+';
+const valueValue = '[^[(\\])\\t]+';
 const afterValue = '\\)';
 const checkNewLine = '[\\r\\n|\\r|\\n]?';
-const regexpKeyValue = new RegExp('^' + beforeKey + '(' + nameKey + ')' + betweenKeyValue + '(' + valValue + ')' + afterValue + '$', 'gm');
-const regexpBegin = new RegExp('^' + checkNewLine + beforeKey + nameKey + betweenKeyValue + valValue + afterValue, 'i');
+const regexpKeyValue = new RegExp('^' + beforeKey + '(' + nameKey + ')' + betweenKeyValue + '(' + valueValue + ')' + afterValue + '$', 'gm');
+const regexpBegin = new RegExp('^' + checkNewLine + beforeKey + nameKey + betweenKeyValue + valueValue + afterValue, 'i');
 
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
@@ -70,14 +70,14 @@ const stringify = (input, objectAfter) => {
 	Object.keys(objectBefore).forEach(key => {
 		// Delete metadata
 		if (objectAfter[key] === undefined) {
-			const regexpDel = new RegExp('^' + beforeKey + key + betweenKeyValue + valValue + afterValue + checkNewLine, 'gm');
+			const regexpDel = new RegExp('^' + beforeKey + key + betweenKeyValue + valueValue + afterValue + checkNewLine, 'gm');
 			result = result.replace(regexpDel, '');
 			return;
 		}
 
 		// Change metadata
 		if (objectBefore[key] !== objectAfter[key]) {
-			const regexpChg = new RegExp('^' + beforeKey + key + betweenKeyValue + valValue + afterValue + '$', 'gm');
+			const regexpChg = new RegExp('^' + beforeKey + key + betweenKeyValue + valueValue + afterValue + '$', 'gm');
 			result = result.replace(regexpChg, `[${key}]: # (${objectAfter[key]})`
 			);
 		}

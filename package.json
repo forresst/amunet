@@ -42,14 +42,14 @@
 	"devDependencies": {
 		"@commitlint/cli": "^8.3.5",
 		"@commitlint/config-conventional": "^8.3.4",
-		"ava": "^3.4.0",
+		"ava": "^3.5.0",
 		"coveralls": "^3.0.6",
 		"husky": "^4.2.3",
 		"markdown-magic": "^1.0.0",
 		"markdown-magic-package-json": "^2.0.1",
 		"mock-fs": "^4.11.0",
 		"nyc": "^15.0.0",
-		"xo": "^0.27.2"
+		"xo": "^0.28.0"
 	},
 	"nyc": {
 		"reporter": [
