@@ -5,11 +5,10 @@
 
 Amunet : markdown metadata hidden
 
-[![Travis Build Status](https://travis-ci.org/forresst/amunet.svg?branch=master)](https://travis-ci.org/forresst/amunet)
-[![AppVeyor Build status](https://ci.appveyor.com/api/projects/status/4movr98t9uephfyg?svg=true)](https://ci.appveyor.com/project/forresst/amunet)
+[![Test Github Status](https://github.com/forresst/amunet/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/forresst/amunet/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/forresst/amunet/badge.svg)](https://coveralls.io/github/forresst/amunet)
 [![version](https://img.shields.io/npm/v/amunet.svg?style=flat-square)](https://www.npmjs.com/package/amunet)
-[![node-version](https://img.shields.io/badge/node-%3E%3D%208.0-orange.svg?style=flat-square)](https://nodejs.org)
+[![node-version](https://img.shields.io/badge/node-%3E%3D%2010.0-orange.svg?style=flat-square)](https://nodejs.org)
 [![downloads](https://img.shields.io/npm/dm/amunet.svg?style=flat-square)](http://npm-stat.com/charts.html?package=amunet)
 
 [![MIT License](https://img.shields.io/npm/l/amunet.svg?style=flat-square)](https://github.com/forresst/amunet/blob/master/LICENSE)
