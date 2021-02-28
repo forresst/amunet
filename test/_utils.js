@@ -5,9 +5,9 @@ const {promisify} = require('util');
 
 const deleteContentFolderRecursiveSync = pathFolder => {
 	if (fs.existsSync(pathFolder)) {
-		fs.readdirSync(pathFolder).forEach(file => {
+		for (const file of fs.readdirSync(pathFolder)) {
 			if (file === '.gitignore') {
-				return;
+				continue;
 			}
 
 			const curPath = path.join(pathFolder, file);
@@ -17,7 +17,7 @@ const deleteContentFolderRecursiveSync = pathFolder => {
 			} else {
 				fs.unlinkSync(curPath);
 			}
-		});
+		}
 	}
 };
 

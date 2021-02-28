@@ -46,11 +46,12 @@ const stringify = (input, objectAfter) => {
 
 	// Add metadata
 	let addContent = '';
-	Object.keys(objectAfter).forEach(key => {
+	for (const key of Object.keys(objectAfter)) {
 		if (objectBefore[key] === undefined) {
 			addContent += newLine + `[${key}]: # (${objectAfter[key]})`;
 		}
-	});
+	}
+
 	let result = input;
 	if (addContent !== '') {
 		// To avoid to have a metadata and the file content on same line
@@ -60,19 +61,19 @@ const stringify = (input, objectAfter) => {
 
 		// The file content does not begin by a metadata : we add a new line after content added
 		// The goal is to separate the metadata from the rest of the content with an empty line
-		if (input !== '' && !input.match(regexpBegin)) {
+		if (input !== '' && !regexpBegin.test(input)) {
 			addContent += newLine;
 		}
 
 		result = addContent + input;
 	}
 
-	Object.keys(objectBefore).forEach(key => {
+	for (const key of Object.keys(objectBefore)) {
 		// Delete metadata
 		if (objectAfter[key] === undefined) {
 			const regexpDel = new RegExp('^' + beforeKey + key + betweenKeyValue + valueValue + afterValue + checkNewLine, 'gm');
 			result = result.replace(regexpDel, '');
-			return;
+			continue;
 		}
 
 		// Change metadata
@@ -81,7 +82,7 @@ const stringify = (input, objectAfter) => {
 			result = result.replace(regexpChg, `[${key}]: # (${objectAfter[key]})`
 			);
 		}
-	});
+	}
 
 	return result;
 };
