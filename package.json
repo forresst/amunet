@@ -47,7 +47,7 @@
 		"husky": "^6.0.0",
 		"markdown-magic": "^2.0.0",
 		"markdown-magic-package-json": "^2.0.1",
-		"mock-fs": "^4.11.0",
+		"mock-fs": "^5.2.0",
 		"nyc": "^15.0.0",
 		"xo": "^0.38.1"
 	},
