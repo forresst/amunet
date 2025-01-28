@@ -8,7 +8,7 @@ Amunet : markdown metadata hidden
 [![Test Github Status](https://github.com/forresst/amunet/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/forresst/amunet/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/forresst/amunet/badge.svg)](https://coveralls.io/github/forresst/amunet)
 [![version](https://img.shields.io/npm/v/amunet.svg?style=flat-square)](https://www.npmjs.com/package/amunet)
-[![node-version](https://img.shields.io/badge/node-%3E%3D%2010.0-orange.svg?style=flat-square)](https://nodejs.org)
+[![node-version](https://img.shields.io/badge/node-%3E%3D%2018.0-orange.svg?style=flat-square)](https://nodejs.org)
 [![downloads](https://img.shields.io/npm/dm/amunet.svg?style=flat-square)](http://npm-stat.com/charts.html?package=amunet)
 
 [![MIT License](https://img.shields.io/npm/l/amunet.svg?style=flat-square)](https://github.com/forresst/amunet/blob/master/LICENSE)
@@ -57,43 +57,41 @@ Note that this README.md file contains a `filename` metadata with the value `REA
 
 ## Table of Contents
 
-<!-- ⛔️ AUTO-GENERATED-CONTENT:START (TOC) -->
 - [The goal](#the-goal)
 - [Installation](#installation)
 - [Usage](#usage)
   * [Node.js](#nodejs)
 - [API](#api)
-  * [amunet.parse(input)](#amunetparseinput)
+  * [parse(input)](#amunetparseinput)
     + [input](#input)
     + [return](#return)
     + [Example](#example)
-  * [amunet.stringify(input, objectAfter)](#amunetstringifyinput-objectafter)
+  * [stringify(input, objectAfter)](#amunetstringifyinput-objectafter)
     + [input](#input-1)
     + [objectAfter](#objectafter)
     + [return](#return-1)
     + [Example](#example-1)
-  * [amunet.read(filePath)](#amunetreadfilepath)
+  * [read(filePath)](#amunetreadfilepath)
     + [filePath](#filepath)
     + [return](#return-2)
     + [Example](#example-2)
-  * [amunet.readSync(filePath)](#amunetreadsyncfilepath)
+  * [readSync(filePath)](#amunetreadsyncfilepath)
     + [filePath](#filepath-1)
     + [return](#return-3)
     + [Example](#example-3)
-  * [amunet.write(filePath, objectAfter, options?)](#amunetwritefilepath-objectafter-options)
+  * [write(filePath, objectAfter, options?)](#amunetwritefilepath-objectafter-options)
     + [filePath](#filepath-2)
     + [objectAfter](#objectafter-1)
     + [options](#options)
     + [return](#return-4)
     + [Example](#example-4)
-  * [amunet.writeSync(filePath, objectAfter, options?)](#amunetwritesyncfilepath-objectafter-options)
+  * [writeSync(filePath, objectAfter, options?)](#amunetwritesyncfilepath-objectafter-options)
     + [filePath](#filepath-3)
     + [objectAfter](#objectafter-2)
     + [options](#options-1)
     + [return](#return-5)
     + [Example](#example-5)
 - [LICENSE](#license)
-<!-- ⛔️ AUTO-GENERATED-CONTENT:END -->
 
 ## Installation
 
@@ -108,52 +106,51 @@ npm install --save-dev amunet
 ### Node.js
 
 ```js
-const path = require('path');
-const amunet = require('amunet');
+import path from 'node:path';
+import {readSync, read} from 'amunet';
 
 // ----------------------------
 // Read the file synchronously
 // ----------------------------
-const file = amunet.readSync(path.join(__dirname, 'README.md'));
-console.log(file.metadata);
-//=> With the 'README.md' file of this package => { filename: 'README.md' }
+const metadataSync = readSync(path.join(import.meta.dirname, 'README.md'));
+console.log(metadataSync);
+// With the 'README.md' file of this package => { filename: 'README.md' }
 
 // -----------------------------
 // Read the file asynchronously
 // -----------------------------
-(async () => {
-  const fileSync = await amunet.read(path.join(__dirname, 'README.md'));
-  console.log(fileSync.metadata);
-  // With the 'README.md' file of this package => { filename: 'README.md' }
-})();
+const metadataAsync = await read(path.join(import.meta.dirname, 'README.md'));
+console.log(metadataAsync);
+// With the 'README.md' file of this package => { filename: 'README.md' }
 ```
 
 Or from a remote location:
 
 ```js
-const https = require('https');
-const amunet = require('amunet');
+import https from 'node:https';
+import {parse} from 'amunet';
 
-const getRemoteMetadata = url => new Promise((resolve, reject) => {
-  https.get(url, resp => {
-    resp.once('data', buffer => {
-      resp.destroy();
-      resolve(amunet.parse(buffer.toString('utf8')));
-    });
-  }).on('error', error => {
-    reject(error);
-  });
+// ----------------------------
+// Read the file synchronously
+// ----------------------------
+const getRemoteMetadata = async url => new Promise((resolve, reject) => {
+	https.get(url, resp => {
+		resp.once('data', buffer => {
+			resp.destroy();
+			resolve(parse(buffer.toString('utf8')));
+		});
+	}).on('error', error => {
+		reject(error);
+	});
 });
 
-(async () => {
-  console.log(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'));
-  // With the 'README.md' file of this package => { filename: 'README.md' }
-})();
+console.log(await getRemoteMetadata('https://raw.githubusercontent.com/forresst/amunet/master/README.md'));
+// With the 'README.md' file of this package => { filename: 'README.md' }
 ```
 
 ## API
 
-### amunet.parse(input)
+### parse(input)
 
 Parse the content of the string. Returns a `object` with the metadata (key/value pairs).
 
@@ -177,7 +174,7 @@ The object with the metadata as key\value pairs.
 
 > ```js
 >
-> const amunet = require('amunet');
+> import {parse} from 'amunet';
 >
 > const inputString = `
 > [a]: # (1)
@@ -188,11 +185,11 @@ The object with the metadata as key\value pairs.
 > Hello world
 > `;
 >
-> console.log(amunet.parse(inputString));
+> console.log(parse(inputString));
 > //=> { a: '1', b: 'Hello' }
 > ```
 
-### amunet.stringify(input, objectAfter)
+### stringify(input, objectAfter)
 
 Add/change/remove the content of the `input` string with the object `objectAfter`. Returns a `string` with the modified content.
 
@@ -227,7 +224,7 @@ The string with the content changed.
 
 > ```js
 >
-> const amunet = require('amunet');
+> import {stringify} from 'amunet';
 >
 > const inputString = `
 > [a]: # (1)
@@ -239,7 +236,7 @@ The string with the content changed.
 > Hello world
 > `;
 >
-> console.log(amunet.stringify(inputString, { a: '1', b: 'World', d: '4' }));
+> console.log(stringify(inputString, {a: '1', b: 'World', d: '4'}));
 > //=> `
 > // [d]: # (4)
 > // [a]: # (1)
@@ -251,7 +248,7 @@ The string with the content changed.
 > // `
 > ```
 
-### amunet.read(filePath)
+### read(filePath)
 
 Read asynchronously a file and parse its content. Returns a `Promise<object>` with the parsed metadata of the specified file (`filePath`).
 
@@ -287,17 +284,15 @@ The object contains the metadata as key\value pairs found in the specified file.
 `index.js`:
 
 > ```js
-> const path = require('path');
-> const amunet = require('amunet');
+> import path from 'node:path';
+> import {read} from 'amunet';
 >
-> (async () => {
->   const fileAsync = await amunet.read(path.join(__dirname, 'README.md'));
->   console.log(fileAsync);
->   //=> { a: '1', b: 'Hello' }
-> })();
+> const fileAsync = await read(path.join(import.meta.dirname, 'README.md'));
+> console.log(fileAsync);
+> //=> { a: '1', b: 'Hello' }
 > ```
 
-### amunet.readSync(filePath)
+### readSync(filePath)
 
 Read synchronously a file and parse its content. Returns a `object` with the parsed metadata of the specified file (`filePath`).
 
@@ -334,15 +329,15 @@ The object contains the metadata as key\value pairs found in the specified file.
 
 > ```js
 >
-> const path = require('path');
-> const amunet = require('amunet');
+> import path from 'node:path';
+> import {readSync} from 'amunet';
 >
-> const fileSync = amunet.readSync(path.join(__dirname, 'README.md'));
+> const fileSync = readSync(path.join(import.meta.dirname, 'README.md'));
 > console.log(fileSync);
 > //=> { a: '1', b: 'Hello' }
 > ```
 
-### amunet.write(filePath, objectAfter, options?)
+### write(filePath, objectAfter, options?)
 
 Write asynchronously a file (`filePath`) and change its content with object `objectAfter`.
 
@@ -390,23 +385,21 @@ Type: `Promise`
 
 > ```js
 >
-> const path = require('path');
-> const amunet = require('amunet');
+> import path from 'node:path';
+> import {write} from 'amunet';
 >
-> (async () => {
->   await amunet.write(path.join(__dirname, 'README.md'), { a: '1', b: 'World', d: '4' });
->   //=> new content of README.md:
->   // [d]: # (4)
->   // [a]: # (1)
->   // [b]: # (World)
->   //
->   // # Doc
->   //
->   // Hello world
-> })();
+> await write(path.join(import.meta.dirname, 'README.md'), {a: '1', b: 'World', d: '4'});
+> //=> new content of README.md:
+> // [d]: # (4)
+> // [a]: # (1)
+> // [b]: # (World)
+> //
+> // # Doc
+> //
+> // Hello world
 > ```
 
-### amunet.writeSync(filePath, objectAfter, options?)
+### writeSync(filePath, objectAfter, options?)
 
 Write synchronously a file (`filePath`) and change its content with object `objectAfter`.
 
@@ -454,10 +447,10 @@ Nothing
 
 > ```js
 >
-> const path = require('path');
-> const amunet = require('amunet');
+> import path from 'node:path';
+> import {writeSync} from 'amunet';
 >
-> amunet.writeSync(path.join(__dirname, 'README.md'), { a: '1', b: 'World', d: '4' });
+> writeSync(path.join(import.meta.dirname, 'README.md'), {a: '1', b: 'World', d: '4'});
 > //=> new content of README.md:
 > // [d]: # (4)
 > // [a]: # (1)
@@ -470,6 +463,4 @@ Nothing
 
 ## LICENSE
 
-<!-- ⛔️ AUTO-GENERATED-CONTENT:START (PKGJSON:template=${license}) -->
 MIT
-<!-- ⛔️ AUTO-GENERATED-CONTENT:END -->

@@ -1,45 +1,46 @@
-'use strict';
-const path = require('path');
-const test = require('ava');
-const {read} = require('..');
+import path from 'node:path';
+import test from 'ava';
+import {read} from '../index.js';
+
+const inputDirectory = path.join(import.meta.dirname, '../../source/test/fixtures');
 
 test('Read async unknown file', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'unknown.md'));
+	const result = await read(path.join(inputDirectory, 'unknown.md'));
 	t.deepEqual(result, {});
 });
 
 test('Read async without metadata', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'without-metadata.md'));
+	const result = await read(path.join(inputDirectory, 'without-metadata.md'));
 	t.deepEqual(result, {});
 });
 
 test('Read async one metadata', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'a-equal-1.md'));
+	const result = await read(path.join(inputDirectory, 'a-equal-1.md'));
 	t.deepEqual(result, {a: '1'});
 });
 
 test('Read async two metadata', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'two-metadata.md'));
+	const result = await read(path.join(inputDirectory, 'two-metadata.md'));
 	t.deepEqual(result, {
 		a: '1',
-		b: '2'
+		b: '2',
 	});
 });
 
 test('Read async with metadata anywhere', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'metadata-anywhere.md'));
+	const result = await read(path.join(inputDirectory, 'metadata-anywhere.md'));
 	t.deepEqual(result, {
 		a: '1',
 		b: '2',
 		c: '3',
 		d: '4',
 		e: '5',
-		f: '6'
+		f: '6',
 	});
 });
 
 test('Read async format pass', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'format-pass.md'));
+	const result = await read(path.join(inputDirectory, 'format-pass.md'));
 	t.deepEqual(result, {
 		formatpass001: 'The best format',
 		formatpass002: 'With a space between `open bracket` and `formatpass002`',
@@ -63,11 +64,11 @@ test('Read async format pass', async t => {
 		formatpass020: 'With a tab between `pound sign` and `open parenthesis`',
 		formatpass021: 'This comment will be taken because it will overwrite the metadata `formatpass021` of the previous line',
 		formatpass022: 'Two metadatas without empty line between `formatpass022` and `formatpass023`',
-		formatpass023: 'Two metadatas without empty line between `formatpass022` and `formatpass023`'
+		formatpass023: 'Two metadatas without empty line between `formatpass022` and `formatpass023`',
 	});
 });
 
 test('Read async format fail', async t => {
-	const result = await read(path.join(__dirname, 'fixtures', 'format-fail.md'));
+	const result = await read(path.join(inputDirectory, 'format-fail.md'));
 	t.deepEqual(result, {});
 });

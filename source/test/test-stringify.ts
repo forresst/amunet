@@ -1,42 +1,5 @@
-'use strict';
-const test = require('ava');
-const {stringify} = require('..');
-
-test('The `stringify` function without arguments should throw an error', t => {
-	t.throws(() => {
-		stringify();
-	}, {
-		instanceOf: TypeError,
-		message: 'Expected the `input` argument to be of type `String`, got `undefined`'
-	});
-});
-
-test('If the first argument of the `stringify` function is not a string, an error should be thrown', t => {
-	t.throws(() => {
-		stringify({});
-	}, {
-		instanceOf: TypeError,
-		message: 'Expected the `input` argument to be of type `String`, got `object`'
-	});
-});
-
-test('The `stringify` function with one argument should throw an error', t => {
-	t.throws(() => {
-		stringify('');
-	}, {
-		instanceOf: TypeError,
-		message: 'Expected the `objectAfter` argument to be of type `Object`, got `undefined`'
-	});
-});
-
-test('If the second argument of the `stringify` function is not a object, an error should be thrown', t => {
-	t.throws(() => {
-		stringify('', '');
-	}, {
-		instanceOf: TypeError,
-		message: 'Expected the `objectAfter` argument to be of type `Object`, got `string`'
-	});
-});
+import test from 'ava';
+import {stringify} from '../index.js';
 
 test('The `stringify` function without metadata should return a empty string', t => {
 	t.is(stringify('', {}), '');
@@ -345,5 +308,7 @@ Hello world
 
 Hello world
 `;
-	t.is(stringify(myString, {a: 'async', b: 2, x: 24, d: 4, f: 'async', y: 25, h: 'async', i: 9, z: 26}), expectedString);
+	t.is(stringify(myString, {
+		a: 'async', b: 2, x: 24, d: 4, f: 'async', y: 25, h: 'async', i: 9, z: 26,
+	}), expectedString);
 });

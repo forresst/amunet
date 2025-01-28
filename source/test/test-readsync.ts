@@ -1,45 +1,46 @@
-'use strict';
-const path = require('path');
-const test = require('ava');
-const {readSync} = require('..');
+import path from 'node:path';
+import test from 'ava';
+import {readSync} from '../index.js';
+
+const inputDirectory = path.join(import.meta.dirname, '../../source/test/fixtures');
 
 test('Read sync unknown file', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'unknown.md'));
+	const result = readSync(path.join(inputDirectory, 'unknown.md'));
 	t.deepEqual(result, {});
 });
 
 test('Read sync without metadata', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'without-metadata.md'));
+	const result = readSync(path.join(inputDirectory, 'without-metadata.md'));
 	t.deepEqual(result, {});
 });
 
 test('Read sync one metadata', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'a-equal-1.md'));
+	const result = readSync(path.join(inputDirectory, 'a-equal-1.md'));
 	t.deepEqual(result, {a: '1'});
 });
 
 test('Read sync two metadata', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'two-metadata.md'));
+	const result = readSync(path.join(inputDirectory, 'two-metadata.md'));
 	t.deepEqual(result, {
 		a: '1',
-		b: '2'
+		b: '2',
 	});
 });
 
 test('Read sync with metadata anywhere', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'metadata-anywhere.md'));
+	const result = readSync(path.join(inputDirectory, 'metadata-anywhere.md'));
 	t.deepEqual(result, {
 		a: '1',
 		b: '2',
 		c: '3',
 		d: '4',
 		e: '5',
-		f: '6'
+		f: '6',
 	});
 });
 
 test('Read sync format pass', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'format-pass.md'));
+	const result = readSync(path.join(inputDirectory, 'format-pass.md'));
 	t.deepEqual(result, {
 		formatpass001: 'The best format',
 		formatpass002: 'With a space between `open bracket` and `formatpass002`',
@@ -63,11 +64,11 @@ test('Read sync format pass', t => {
 		formatpass020: 'With a tab between `pound sign` and `open parenthesis`',
 		formatpass021: 'This comment will be taken because it will overwrite the metadata `formatpass021` of the previous line',
 		formatpass022: 'Two metadatas without empty line between `formatpass022` and `formatpass023`',
-		formatpass023: 'Two metadatas without empty line between `formatpass022` and `formatpass023`'
+		formatpass023: 'Two metadatas without empty line between `formatpass022` and `formatpass023`',
 	});
 });
 
 test('Read sync format fail', t => {
-	const result = readSync(path.join(__dirname, 'fixtures', 'format-fail.md'));
+	const result = readSync(path.join(inputDirectory, 'format-fail.md'));
 	t.deepEqual(result, {});
 });
