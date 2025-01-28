@@ -1,10 +1,11 @@
 import path from 'node:path';
+import process from 'node:process';
 import fs from 'node:fs';
 import test from 'ava';
 import {writeSync} from '../index.js';
 import {deleteContentFolderRecursiveSync} from './_utils.js';
 
-const outputDirectory = path.join(import.meta.dirname, '../../source/test/fixtures/output/write-sync');
+const outputDirectory = path.join(process.cwd(), 'source/test/fixtures/output/write-sync');
 
 // Removing output test files before all tests
 test.before('Cleanup', () => {

@@ -1,8 +1,9 @@
 import path from 'node:path';
+import process from 'node:process';
 import test from 'ava';
 import {readSync} from '../index.js';
 
-const inputDirectory = path.join(import.meta.dirname, '../../source/test/fixtures');
+const inputDirectory = path.join(process.cwd(), 'source/test/fixtures');
 
 test('Read sync unknown file', t => {
 	const result = readSync(path.join(inputDirectory, 'unknown.md'));
